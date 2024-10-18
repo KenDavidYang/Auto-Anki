@@ -8,8 +8,11 @@ Automates the creation of Anki flashcards
 	-"Kanji" for the front
 	-"Hiragana" and "English" for the back
 	-click "insert"
-	-repeat until satisfied
-	-you now have an excel file that you can import to anki
+	-repeat until satisfied 
+	-click "Save CSV" button 
+	-import the CSV file to anki 
+	-set "Field Separator" to "Comma" 
+	-click "Import" and enjoy your deck :) 
 # Images:
 	-should be saved in an image folder accessible by anki
 	-should be saved as .png
@@ -17,5 +20,8 @@ Automates the creation of Anki flashcards
 # Audio:
 	-should have the same name as what's in the "english" text field
 	-should be saved in a folder accessible by anki
+# Folder: 
+	-Your images and audio files should be placed in:
+	-C:\Users\YourUserName\AppData\Roaming\Anki2\User 1\collection.media
 
 
