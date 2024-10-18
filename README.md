@@ -14,12 +14,11 @@ Automates the creation of Anki flashcards
 	-set "Field Separator" to "Comma" 
 	-click "Import" and enjoy your deck :) 
 # Images:
-	-should be saved in an image folder accessible by anki
+	-should have the same name as what's named in the "english" text field
 	-should be saved as .png
 
 # Audio:
 	-should have the same name as what's in the "english" text field
-	-should be saved in a folder accessible by anki
 # Folder: 
 	-Your images and audio files should be placed in:
 	-C:\Users\YourUserName\AppData\Roaming\Anki2\User 1\collection.media
