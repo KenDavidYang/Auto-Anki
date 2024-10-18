@@ -3,6 +3,8 @@ from tkinter import ttk, filedialog, messagebox
 import openpyxl as opyxl
 from openpyxl import Workbook
 from random import randint
+import pandas as pd
+import os
 
 class GUI:
     def __init__(self):
@@ -10,8 +12,8 @@ class GUI:
         self.directory = None
 
         self.root = tk.Tk()
-        self.root.geometry("330x300")
-        self.root.title("Anki-to-Excel")
+        self.root.geometry("330x380")
+        self.root.title("Auto Anki")
         self.root.resizable(False, False)
         
         self.root.iconbitmap("auto_anki.ico")
@@ -59,8 +61,16 @@ class GUI:
         self.directory_button.grid(row=9, column=0, padx=15, pady=(40,0), sticky="NWES")
 
         # Insert button
-        self.set_button = tk.Button(self.mainframe, text="Insert", takefocus=False, command=self.insert_to_excel, bg='lightgreen', relief="flat", activebackground="lightblue", font=("helvetica", 20), cursor="hand2")
+        self.set_button = tk.Button(self.mainframe, text="Insert", takefocus=False, command=self.insert_to_excel, bg='#5B9BCF', relief="flat", activebackground="lightblue", font=("helvetica", 20), cursor="hand2")
         self.set_button.grid(row=9, column=1, pady=(20,0), sticky="NWES")
+        self.set_button.bind("<Enter>", self.on_enter_setButton)
+        self.set_button.bind("<Leave>", self.on_leave_setButton)
+
+        # Save button
+        self.save_button = tk.Button(self.mainframe, text="Save CSV", takefocus=False, command=self.save_csv, bg='#3CBF5B', relief="flat", activebackground="lightgreen", font=("helvetica", 20), cursor="hand2")
+        self.save_button.grid(row=10, column=0, columnspan=2, pady=(20,0), padx=(15,0), sticky="EW")
+        self.save_button.bind("<Enter>", self.on_enter_saveButton)
+        self.save_button.bind("<Leave>", self.on_leave_saveButton)
 
     def find_directory(self):
         self.directory = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
@@ -92,8 +102,42 @@ class GUI:
             exporter = Anki(self.directory, self.row)
             exporter.export()
 
+            self.reset_fields()
+
+
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
+    
+    def reset_fields(self):
+        self.set_kanji_field.delete(0, tk.END)
+        self.set_hiragana_field_1.delete(0, tk.END)
+        self.set_hiragana_field_2.delete(0, tk.END)
+        self.set_english_field_1.delete(0, tk.END)
+        self.set_english_field_2.delete(0, tk.END)
+    
+    def save_csv(self):
+        try:
+            directory_path = os.path.dirname(self.directory)
+            filename = os.path.splitext(os.path.basename(self.directory))[0] + " CSV.csv"
+            filepath = os.path.join(directory_path, filename)
+            df = pd.read_excel(self.directory)
+            df.to_csv(filepath, index=False, encoding='utf-8')
+
+            messagebox.showinfo("Success", "CSV file saved successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
+    def on_enter_setButton(self, event):
+        self.set_button['background'] = "lightblue"
+
+    def on_leave_setButton(self, event):
+        self.set_button['background'] = "#5B9BCF"
+
+    def on_enter_saveButton(self, event):
+        self.save_button['background'] = "lightgreen"
+
+    def on_leave_saveButton(self, event):
+        self.save_button['background'] = "#3CBF5B"
 
 class Anki:
     def __init__(self, excel_file: str, row):
@@ -103,7 +147,8 @@ class Anki:
         self.row = row
 
     def front(self) -> str:
-        return self.row[1]
+        frontcard = f"<H1>{self.row[1]}</H1>"
+        return frontcard
 
     def back(self) -> str:
         amount = self.row[0]
@@ -137,7 +182,6 @@ class Anki:
         self.worksheet.cell(row=cell.row+1, column=2, value=self.back())
 
         self.workbook.save(self.excel_file)
-        print("Export successful!")
 
 
 if __name__ == "__main__":
